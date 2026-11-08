@@ -1,0 +1,1186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+<title>Growth Audit — Toggle VPN</title>
+<link rel="icon" href="img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: only dark;
+  /* ---- Toggle VPN, extracted from their live screens ---- */
+  --tg-bg:#1B1B1B; --tg-card:#313131; --tg-line:#3A3A3A;
+  --tg-green:#0DF027; --tg-green-dk:#178B26; --tg-on-green:#173A1B; --tg-link:#0DF027;
+  --tg-ink:#FFFFFF; --tg-txt:#E8E8E8; --tg-muted:#8E8E93; --tg-off:#4A4F4B;
+  --r-ctl:999px; --r-media:22px;
+  /* ---- the report shell, in Toggle's own palette ---- */
+  --bg:#1B1B1B; --bg2:#242424; --surf:#242424;
+  --hair:rgba(255,255,255,.09); --hair2:rgba(255,255,255,.16);
+  --ink:#FFFFFF; --ink2:#C9C9CC; --ink3:#8E8E93;
+  --accent:#0DF027; --accent-on:#173A1B; --accent-lift:#3BEA51;
+  --panel:#FFFFFF; --panel-ink:#15181B; --panel-muted:#5F666D; --panel-line:#E9ECEF;
+  --accent-ink:#0A7A1B;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+@media(max-width:700px){.wrap{padding:0 20px}}
+
+/* ============ top bar ============ */
+.nav{position:sticky;top:0;z-index:70;background:rgba(27,27,27,.86);backdrop-filter:blur(18px) saturate(160%);
+  border-bottom:1px solid var(--hair)}
+.nav-in{max-width:1080px;margin:0 auto;padding:0 32px;height:58px;display:flex;align-items:center;gap:18px}
+@media(max-width:700px){.nav-in{padding:0 20px;gap:12px}}
+.nav-brand{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;letter-spacing:-.01em}
+.nav-brand img{width:26px;height:26px;flex:none;display:block;border-radius:6px}
+.nav-brand span{color:var(--ink2);font-weight:500}
+.nav-brand b{color:var(--ink);font-weight:600}
+.nav-links{margin-left:auto;display:flex;gap:2px;align-items:center}
+.nav-links button{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;color:var(--ink3);transition:.16s}
+.nav-links button:hover{color:var(--ink)}
+.nav-links button.on{color:var(--ink);background:#313131}
+@media(max-width:640px){.nav-brand span{display:none}}
+
+.view{display:none}
+.view.on{display:block}
+
+/* ============ hero ============ */
+.hero{padding:104px 0 0;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-340px;left:50%;transform:translateX(-50%);
+  width:1100px;height:640px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(13,240,39,.16),transparent 72%)}
+.hero::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(40% 50% at 8% 20%,rgba(45,110,235,.16),transparent 70%),
+   radial-gradient(38% 45% at 92% 18%,rgba(13,240,39,.08),transparent 70%)}
+.hero>*{position:relative;z-index:1}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-lift);margin-bottom:26px}
+.hero h1{font-size:76px;line-height:.98;font-weight:700;letter-spacing:-.045em;margin:0 0 24px}
+@media(max-width:820px){.hero h1{font-size:50px}.hero{padding-top:70px}}
+.hero .lede{font-size:20px;line-height:1.5;font-weight:400;color:var(--ink2);max-width:600px;margin:0 auto;letter-spacing:-.012em}
+@media(max-width:820px){.hero .lede{font-size:17px}}
+.hero .meta{margin-top:30px;font-size:12.5px;color:var(--ink3);letter-spacing:.02em}
+.hero .meta b{color:var(--ink2);font-weight:600}
+
+.stats{display:flex;justify-content:center;gap:0;margin:70px auto 0;max-width:760px;
+  border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.stat{flex:1;padding:26px 14px;text-align:center;border-left:1px solid var(--hair)}
+.stat:first-child{border-left:none}
+.stat b{display:block;font-size:26px;font-weight:700;letter-spacing:-.03em;color:var(--ink)}
+.stat span{display:block;font-size:11.5px;color:var(--ink3);margin-top:5px;line-height:1.35}
+@media(max-width:700px){.stat b{font-size:19px}.stat{padding:18px 8px}}
+
+.fb{max-width:760px;margin:0 auto;padding:30px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:26px;text-align:left}
+@media(max-width:700px){.fb{grid-template-columns:1fr;gap:20px;padding-top:24px}}
+.fb-k{grid-column:1/-1;font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ink3);text-align:center;margin-bottom:-6px}
+.fb-i{display:flex;gap:12px;align-items:flex-start}
+.fb-i .tick{width:18px;height:18px;flex:none;margin-top:3px;border-radius:50%;background:rgba(13,240,39,.16);
+  display:grid;place-items:center}
+.fb-i .tick svg{width:10px;height:10px;stroke:var(--accent-lift);stroke-width:3;fill:none;
+  stroke-linecap:round;stroke-linejoin:round}
+.fb-i p{font-size:14px;line-height:1.55;color:var(--ink2);margin:0}
+.fb-i p b{color:var(--ink);font-weight:700}
+
+.sec{padding:96px 0}
+.sec-k{font-size:11.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin-bottom:18px}
+.sec h2{font-size:38px;line-height:1.14;font-weight:700;letter-spacing:-.035em;margin:0 0 20px;max-width:680px}
+@media(max-width:820px){.sec h2{font-size:29px}.sec{padding:64px 0}}
+.sec p.body{font-size:17px;line-height:1.66;color:var(--ink2);max-width:640px;margin:0 0 18px;letter-spacing:-.008em}
+.sec p.body b{color:var(--ink);font-weight:600}
+.rule{height:1px;background:var(--hair);margin:0}
+
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px;max-width:820px}
+@media(max-width:760px){.notes{grid-template-columns:1fr}}
+.note{background:var(--surf);border:1px solid var(--hair);border-radius:16px;padding:24px 26px}
+.note h4{font-size:15px;font-weight:700;letter-spacing:-.015em;margin:0 0 8px}
+.note p{font-size:14px;line-height:1.6;color:var(--ink2);margin:0}
+
+.ideas{display:flex;flex-direction:column;gap:0;margin-top:14px;border-top:1px solid var(--hair)}
+.idea{display:grid;grid-template-columns:52px 1fr 180px;gap:26px;align-items:start;
+  padding:30px 4px;border-bottom:1px solid var(--hair);text-align:left;width:100%;transition:.18s}
+.idea:hover{background:rgba(255,255,255,.03)}
+@media(max-width:780px){.idea{grid-template-columns:38px 1fr;gap:16px}}
+.idea .no{font-size:13px;font-weight:700;color:var(--ink3);padding-top:4px;letter-spacing:.02em}
+.idea h3{font-size:21px;line-height:1.25;font-weight:700;letter-spacing:-.024em;margin:0 0 7px}
+@media(max-width:820px){.idea h3{font-size:18px}}
+.idea p{font-size:14.5px;line-height:1.6;color:var(--ink2);margin:0;max-width:540px}
+.idea .out{text-align:right;padding-top:3px}
+@media(max-width:780px){.idea .out{grid-column:2;text-align:left;padding-top:12px}}
+.idea .out b{display:block;font-size:19px;font-weight:700;letter-spacing:-.025em;color:var(--accent-lift);white-space:nowrap}
+.idea .out span{display:block;font-size:10.5px;color:var(--ink3);margin-top:3px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.idea .seeit{display:inline-flex;align-items:center;gap:5px;margin-top:11px;font-size:12.5px;
+  font-weight:600;color:var(--accent-lift)}
+.idea .seeit svg{width:12px;height:12px}
+
+.band{background:var(--surf);border:1px solid var(--hair);border-radius:28px;padding:40px 44px;margin-top:44px;
+  display:flex;align-items:center;gap:36px;flex-wrap:wrap}
+@media(max-width:700px){.band{padding:28px 24px;gap:22px}}
+.band .lab{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.band .txt{flex:1;min-width:240px}
+.band .txt p{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0}
+.band .nums{display:flex;gap:34px}
+.band .nums div b{display:block;font-size:30px;font-weight:700;letter-spacing:-.035em;color:var(--accent-lift)}
+.band .nums div span{display:block;font-size:11px;color:var(--ink3);margin-top:2px;letter-spacing:.04em;
+  text-transform:uppercase;font-weight:600}
+
+.cta-row{display:flex;justify-content:center;align-items:center;gap:22px;flex-wrap:wrap;margin-top:52px}
+.bigbtn{display:inline-flex;align-items:center;gap:9px;background:var(--accent);color:var(--accent-on);
+  font-size:15px;font-weight:700;letter-spacing:-.01em;padding:15px 26px;border-radius:30px;transition:.16s}
+.bigbtn:hover{filter:brightness(1.06)}
+.bigbtn svg{width:15px;height:15px}
+
+.foot{border-top:1px solid var(--hair);padding:36px 0 70px;font-size:12.5px;line-height:1.6;color:var(--ink3)}
+
+/* ============ prototype stage ============ */
+.stage{display:grid;grid-template-columns:minmax(440px,1fr) minmax(400px,470px);gap:0;
+  align-items:start;min-height:calc(100vh - 58px)}
+@media(max-width:1080px){.stage{grid-template-columns:1fr}}
+.phonecol{padding:34px 24px 46px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.panelcol{border-left:1px solid var(--hair);background:var(--panel);color:var(--panel-ink);
+  min-height:calc(100vh - 58px);position:sticky;top:58px;max-height:calc(100vh - 58px);overflow-y:auto}
+@media(max-width:1080px){.panelcol{position:static;max-height:none;border-left:none;border-top:1px solid var(--hair)}}
+
+.phone{position:relative;width:390px;height:844px;flex:none;background:#000;border:11px solid #000;
+  border-radius:46px;box-shadow:0 0 0 1.5px #3A3A3A,0 34px 70px -22px rgba(0,0,0,.7)}
+.phone-in{position:absolute;inset:0;border-radius:36px;overflow:hidden;background:var(--tg-bg)}
+.island{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:104px;height:30px;background:#000;
+  border-radius:16px;z-index:60;pointer-events:none}
+.sbar{position:absolute;top:0;left:0;right:0;height:50px;z-index:55;pointer-events:none;display:flex;
+  align-items:center;justify-content:space-between;padding:14px 28px 0 34px;font:600 15px/1 'Inter',sans-serif;color:#fff;transition:color .3s}
+.sbar.dk{color:#111}
+.sbar .glyphs{display:flex;gap:5px;align-items:center}
+.homebar{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:134px;height:5px;
+  border-radius:3px;background:rgba(255,255,255,.9);z-index:56;pointer-events:none;transition:background .3s}
+.homebar.dk{background:#111}
+.screenwrap{position:absolute;inset:0;overflow:hidden;background:var(--tg-bg)}
+
+/* ============ phone screens — Toggle's system, all prefixed scr-/tg- ============ */
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--tg-bg);color:var(--tg-ink);
+  font-family:'Inter',-apple-system,sans-serif;
+  transform:translateX(100%);transition:transform .36s cubic-bezier(.32,.72,0,1);z-index:10;will-change:transform}
+.scr.is-active{transform:translateX(0);z-index:20}
+.scr.is-past{transform:translateX(-24%)}
+.scr.sheet{transform:translateY(100%)}
+.scr.sheet.is-active{transform:translateY(0);z-index:30}
+.scr.nofx{transition:none}
+.scr-top{flex:none;padding:56px 16px 0;position:relative;z-index:2}
+.scr-body{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:0 16px;scrollbar-width:none;position:relative;z-index:2}
+.scr-body::-webkit-scrollbar{display:none}
+.scr-body.dock{display:flex;flex-direction:column}
+.scr-foot{flex:none;padding:12px 16px 30px;position:relative;z-index:2}
+
+.tg-nav{display:flex;align-items:center;gap:14px;height:40px}
+.tg-circ{width:40px;height:40px;flex:none;border-radius:50%;background:var(--tg-card);display:grid;place-items:center;color:var(--tg-green)}
+.tg-circ svg{width:18px;height:18px}
+.tg-prog{flex:1;height:4px;border-radius:2px;background:var(--tg-card);overflow:hidden}
+.tg-prog i{display:block;height:100%;background:var(--tg-green);border-radius:2px;transition:width .4s cubic-bezier(.32,.72,0,1)}
+.tg-h{font-size:31px;line-height:1.12;font-weight:700;letter-spacing:-.02em;margin:22px 0 0;color:var(--tg-ink)}
+.tg-sub{font-size:16px;line-height:1.4;color:var(--tg-txt);margin:10px 0 0}
+
+.tg-btn{display:block;width:100%;height:54px;border-radius:var(--r-ctl);background:var(--tg-green);color:var(--tg-on-green);
+  font:500 17.5px/1 'Inter',sans-serif;letter-spacing:-.01em;transition:filter .15s}
+.tg-btn:hover{filter:brightness(1.05)}
+.tg-btn[disabled]{background:#2A3A2C;color:#5D7360;cursor:default}
+.tg-help{font-size:12.5px;line-height:1.45;color:var(--tg-muted);text-align:center;margin:12px 0 0}
+.tg-help b{color:var(--tg-txt);font-weight:600}
+.tg-legal{display:flex;justify-content:center;align-items:center;gap:26px;margin-top:12px;font-size:13px;color:var(--tg-muted)}
+.tg-legal i{width:4px;height:4px;border-radius:50%;background:var(--tg-muted)}
+
+/* their switch — the toggle in the logo */
+.tg-sw{position:relative;width:50px;height:30px;flex:none;border-radius:15px;background:var(--tg-off);transition:background .2s}
+.tg-sw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;border:3.5px solid #fff;background:transparent;
+  transition:left .22s cubic-bezier(.32,.72,0,1);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.on>.tg-sw,.tg-sw.on{background:var(--tg-green)}
+.on>.tg-sw i,.tg-sw.on i{left:23px}
+
+/* privacy */
+.tg-pp-h{font-size:34px;line-height:1.1;font-weight:700;letter-spacing:-.02em;margin:22px 0 0}
+.tg-pp-k{font-size:17px;font-weight:600;margin:24px 0 0}
+.tg-pp p{font-size:16.5px;line-height:1.38;color:var(--tg-txt);margin:22px 0 0}
+.tg-pp p+p{margin-top:4px}
+.tg-more{display:inline-block;margin-top:28px;font-size:17px;font-weight:600;color:var(--tg-link)}
+
+/* use rows: their pill cards + their switch */
+.tg-rows{display:flex;flex-direction:column;gap:12px;margin-top:24px}
+.tg-row{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--tg-card);border:2px solid transparent;
+  border-radius:var(--r-ctl);padding:0 12px 0 20px;height:62px;font:500 17px/1.2 'Inter',sans-serif;color:var(--tg-ink);transition:.16s}
+.tg-row.on{border-color:var(--tg-green)}
+.tg-row .ic{width:24px;height:24px;flex:none;stroke:var(--tg-green);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tg-row .lb{flex:1}
+
+/* devices */
+.tg-count{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:44px}
+.tg-count .tg-circ{width:58px;height:58px}
+.tg-count .tg-circ svg{width:24px;height:24px}
+.tg-count b{font-size:76px;font-weight:300;letter-spacing:-.04em;min-width:96px;text-align:center;line-height:1}
+.tg-devlab{text-align:center;font-size:15px;color:var(--tg-muted);margin-top:8px}
+.tg-devs{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:34px 6px 0}
+.tg-devs span{height:44px;border-radius:12px;background:var(--tg-card);display:grid;place-items:center;transition:.2s}
+.tg-devs span svg{width:20px;height:20px;stroke:#5A5A5E;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:.2s}
+.tg-devs span.on{background:rgba(13,240,39,.12);box-shadow:inset 0 0 0 1.5px var(--tg-green)}
+.tg-devs span.on svg{stroke:var(--tg-green)}
+.tg-plat{margin-top:26px;font-size:14px;line-height:1.5;color:var(--tg-muted);text-align:center}
+
+/* the wordmark: t [switch] ggle */
+.tg-word{display:flex;align-items:center;justify-content:center;font:400 64px/1 'Inter',sans-serif;letter-spacing:-.02em;color:#fff}
+.tg-word .ws{position:relative;width:96px;height:56px;border-radius:28px;background:#5E6B61;margin:6px 1px 0;transition:background .5s}
+.tg-word .ws i{position:absolute;top:5px;left:5px;width:46px;height:46px;border-radius:50%;border:7px solid #fff;
+  transition:left .6s cubic-bezier(.32,.72,0,1);box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.tg-word .ws.on{background:var(--tg-green)}
+.tg-word .ws.on i{left:45px}
+
+/* loader */
+.tg-loadwrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding-bottom:10px}
+.tg-load-h{font-size:22px;font-weight:600;letter-spacing:-.015em;text-align:center;margin:40px 0 22px}
+.tg-lsteps{width:100%;max-width:300px;display:flex;flex-direction:column;gap:13px;margin-bottom:30px}
+.tg-ls{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:500;color:#6E6E73;transition:.35s}
+.tg-ls.on{color:#fff}
+.tg-ls .d{width:22px;height:22px;flex:none;border-radius:50%;border:2px solid #4A4A4E;display:grid;place-items:center;transition:.35s}
+.tg-ls.on .d{background:var(--tg-green);border-color:var(--tg-green)}
+.tg-ls .d svg{width:12px;height:12px;stroke:var(--tg-on-green);stroke-width:3.4;fill:none;opacity:0;stroke-linecap:round;stroke-linejoin:round}
+.tg-ls.on .d svg{opacity:1}
+.tg-quote{width:100%;max-width:320px;background:var(--tg-card);border-radius:22px;padding:16px 18px;min-height:112px}
+.tg-quote p{font-size:14px;line-height:1.5;color:var(--tg-txt)}
+.tg-quote b{display:block;margin-top:9px;font-size:12.5px;font-weight:600;color:var(--tg-green)}
+.tg-qd{display:flex;gap:5px;justify-content:center;margin-top:12px}
+.tg-qd i{width:6px;height:6px;border-radius:50%;background:#4A4A4E;transition:.3s}
+.tg-qd i.on{background:var(--tg-green);width:16px;border-radius:3px}
+
+/* payoff */
+.tg-card{background:var(--tg-card);border-radius:var(--r-media);padding:4px 16px;margin-top:14px}
+.tg-pr{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--tg-line)}
+.tg-pr:first-child{border-top:none}
+.tg-pr .ic{width:22px;height:22px;flex:none;stroke:var(--tg-green);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tg-pr div{flex:1;font-size:13px;line-height:1.35;color:var(--tg-muted)}
+.tg-pr div b{display:block;font-size:15.5px;font-weight:600;color:var(--tg-ink);margin-bottom:1px}
+.tg-pr .tg-sw{transform:scale(.8);transform-origin:right center}
+.tg-proof{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px}
+.tg-proof svg{width:30px;height:58px;flex:none}
+.tg-proof div{text-align:center}
+.tg-proof b{display:block;font-size:34px;font-weight:700;letter-spacing:-.03em;color:var(--tg-green);line-height:1}
+.tg-proof span{font-size:13.5px;color:var(--tg-txt);font-weight:500}
+.tg-rev{margin-top:10px;background:var(--tg-card);border-radius:18px;padding:13px 16px;font-size:13.5px;line-height:1.45;color:var(--tg-txt)}
+.tg-rev b{display:block;margin-top:6px;font-size:12px;font-weight:600;color:var(--tg-green)}
+
+/* paywall — their composition */
+.scr--pay .scr-top{padding:38px 0 0}
+.tg-tiles{position:relative;width:100%;-webkit-mask-image:linear-gradient(180deg,#000 72%,transparent);mask-image:linear-gradient(180deg,#000 72%,transparent)}
+.tg-tiles img{display:block;width:100%;height:auto}
+.tg-x{position:absolute;z-index:4;left:83.9%;top:12.7%;width:11.86%;aspect-ratio:1;border-radius:50%;background:var(--tg-card);
+  display:grid;place-items:center;color:var(--tg-green);box-shadow:0 0 0 2px rgba(27,27,27,.2)}
+.tg-x svg{width:42%;height:42%}
+.tg-payh{font-size:30px;line-height:1.16;font-weight:400;letter-spacing:-.012em;text-align:center;margin:4px 14px 0;color:#fff}
+.scr--pay .scr-body{padding:0 28px}
+.tg-feat{display:flex;flex-direction:column;gap:12px;margin:18px 0 0 8px}
+.tg-f{display:flex;align-items:center;gap:16px;font-size:16px;line-height:1.25;color:var(--tg-txt)}
+.tg-f svg{width:22px;height:22px;flex:none;stroke:var(--tg-green);stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tg-plans{display:flex;flex-direction:column;gap:16px;margin-top:22px}
+.tg-plan{position:relative;display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--tg-card);
+  border:2px solid transparent;border-radius:var(--r-ctl);padding:10px 20px 10px 12px;min-height:52px;transition:.16s}
+.tg-plan.on{border-color:var(--tg-green);background:#2B302C}
+.tg-radio{width:26px;height:26px;flex:none;border-radius:50%;border:2px solid #6E6E73;display:grid;place-items:center;transition:.16s}
+.tg-plan.on .tg-radio{border-color:var(--tg-green)}
+.tg-radio i{width:14px;height:14px;border-radius:50%;background:var(--tg-green);opacity:0}
+.tg-plan.on .tg-radio i{opacity:1}
+.tg-plan .l{flex:1;font-size:16px;line-height:1.25;color:#fff}
+.tg-plan .l em{display:block;font-style:normal;font-size:16px;color:#fff;font-weight:600;margin-top:1px}
+.tg-help{text-wrap:balance}
+.tg-word>span:first-child{margin-right:3px}
+.tg-plan .r{text-align:right;font-size:16px;font-weight:600;color:#fff;line-height:1.15}
+.tg-plan .r span{display:block;font-size:12.5px;font-weight:400;color:var(--tg-muted)}
+.tg-badge{position:absolute;top:-13px;right:16px;background:var(--tg-green);color:var(--tg-on-green);border-radius:12px;
+  padding:4px 10px;font:600 12px/1.1 'Inter',sans-serif;letter-spacing:.02em}
+.scr--pay .scr-foot{padding:8px 28px 24px}
+
+/* offer */
+.tg-ox{position:absolute;right:16px;top:58px;z-index:4;width:44px;height:44px;border-radius:50%;background:var(--tg-card);display:grid;place-items:center;color:var(--tg-green)}
+.tg-ox svg{width:18px;height:18px}
+.tg-omark{display:flex;justify-content:center;margin-top:46px}
+.tg-omark .tg-sw{width:96px;height:56px;border-radius:28px}
+.tg-omark .tg-sw i{width:46px;height:46px;top:5px;left:5px;border-width:7px}
+.tg-omark .tg-sw.on i{left:45px}
+.tg-oh{font-size:31px;line-height:1.12;font-weight:700;letter-spacing:-.02em;text-align:center;margin:24px 8px 0}
+.tg-os{font-size:16px;line-height:1.4;color:var(--tg-txt);text-align:center;margin:10px 10px 0}
+.tg-cmp{display:flex;flex-direction:column;gap:16px;margin-top:30px}
+.tg-crow{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--tg-card);
+  border:2px solid transparent;border-radius:var(--r-ctl);padding:12px 22px;min-height:58px}
+.tg-crow.on{border-color:var(--tg-green);background:#2B302C}
+.tg-crow .l{font-size:16px;color:#fff;line-height:1.25}
+.tg-crow .l span{display:block}
+.tg-crow .l span+span{font-size:12.5px;color:var(--tg-muted);margin-top:1px}
+.tg-crow .r{font-size:17px;font-weight:600;color:#fff;text-align:right}
+.tg-crow .r span{display:block;font-size:12.5px;font-weight:400;color:var(--tg-muted)}
+.tg-crow.was .l>span:first-child,.tg-crow.was .r{color:var(--tg-muted)}
+.tg-os,.tg-oh,.hero .lede{text-wrap:balance}
+.tg-crow .tg-badge{right:22px}
+.tg-incl{margin-top:22px;display:flex;flex-direction:column;gap:11px;padding:0 6px}
+.scr--offer .scr-body{padding:0 24px}
+.scr--offer .scr-foot{padding:8px 24px 24px}
+
+/* account (their welcome) */
+.tg-pillout{position:absolute;right:16px;top:54px;height:38px;padding:0 16px;border-radius:19px;border:1.5px solid #3A3A3A;
+  color:var(--tg-green);font:500 16px/35px 'Inter',sans-serif}
+.tg-wel{display:flex;flex-direction:column;justify-content:center;height:100%;text-align:center;padding:0 6px 60px}
+.tg-wel h2{font-size:34px;line-height:1.12;font-weight:700;letter-spacing:-.02em}
+.tg-wel p{font-size:15.5px;line-height:1.4;color:var(--tg-txt);margin:10px 0 26px}
+.tg-login{text-align:center;font-size:15.5px;color:var(--tg-txt);padding-bottom:10px}
+.tg-login b{color:var(--tg-green);font-weight:500}
+
+/* light — an approximation: Toggle ships dark-only in every frame we have */
+.phone-in.lite{--tg-bg:#F2F2F4;--tg-card:#FFFFFF;--tg-line:#E2E2E6;--tg-ink:#111214;--tg-txt:#3A3B3E;--tg-muted:#808086;--tg-off:#C9CCCA;--tg-link:#0A9E1D}
+.phone-in.lite .scr,.phone-in.lite .screenwrap{color:var(--tg-ink)}
+.phone-in.lite .tg-row,.phone-in.lite .tg-plan,.phone-in.lite .tg-crow,.phone-in.lite .tg-card,.phone-in.lite .tg-rev,
+.phone-in.lite .tg-quote,.phone-in.lite .tg-devs span,.phone-in.lite .tg-circ,.phone-in.lite .tg-ox{box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.phone-in.lite .tg-row .ic,.phone-in.lite .tg-pr .ic,.phone-in.lite .tg-f svg{stroke:#0A9E1D}
+.phone-in.lite .tg-circ,.phone-in.lite .tg-ox,.phone-in.lite .tg-x{color:#0A9E1D}
+.phone-in.lite .tg-plan .l,.phone-in.lite .tg-plan .r,.phone-in.lite .tg-crow .l,.phone-in.lite .tg-crow .r,
+.phone-in.lite .tg-payh,.phone-in.lite .tg-word,.phone-in.lite .tg-ls.on{color:var(--tg-ink)}
+.phone-in.lite .tg-plan.on,.phone-in.lite .tg-crow.on{background:#EEFDEF}
+.phone-in.lite .tg-plan .l em{color:var(--tg-ink)}
+.phone-in.lite .tg-proof b,.phone-in.lite .tg-rev b,.phone-in.lite .tg-quote b,.phone-in.lite .tg-login b,.phone-in.lite .tg-pillout{color:#0A9E1D}
+.phone-in.lite .tg-crow.was .r,.phone-in.lite .tg-plan .r span{color:var(--tg-muted)}
+.phone-in.lite .tg-ls{color:#A0A0A6}
+.phone-in.lite .tg-ls .d,.phone-in.lite .tg-radio{border-color:#C4C4C8}
+.phone-in.lite .tg-plan.on .tg-radio{border-color:var(--tg-green)}
+.phone-in.lite .tg-devs span svg{stroke:#B4B4BA}
+.phone-in.lite .tg-devs span.on{background:#EEFDEF}
+.phone-in.lite .tg-devs span.on svg{stroke:#0A9E1D}
+.phone-in.lite .tg-qd i{background:#CFCFD3}
+.phone-in.lite .tg-qd i.on{background:var(--tg-green)}
+.phone-in.lite .tg-prog{background:#DCDCE0}
+.phone-in.lite .tg-pillout{border-color:#D4D4D8}
+.phone-in.lite .tg-btn[disabled]{background:#CDEFD1;color:#7FA785}
+.phone-in.lite .tg-tiles{background:#1B1B1B}
+.phone-in.lite .tg-legal i{background:#B0B0B6}
+
+/* prototype toolbar, walkthrough, QR */
+.tools{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:520px}
+.seg{display:inline-flex;align-items:center;background:#262626;border:1px solid #3A3A3A;border-radius:20px;padding:3px;gap:2px}
+.seg button{padding:6px 11px;border-radius:16px;font:600 12px/1 'Inter',sans-serif;color:var(--ink2);transition:.14s}
+.seg button.on{background:var(--ink);color:#111}
+.demo-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:20px;background:var(--accent);color:var(--accent-on);
+  font:700 12px/1 'Inter',sans-serif}
+.demo-cap{width:390px;max-width:calc(100vw - 24px);background:#262626;border:1px solid var(--hair2);border-radius:16px;padding:14px 14px 12px;
+  display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.3)}
+.demo-cap .bar{position:absolute;left:0;top:0;right:0;height:3px;background:#333}
+.demo-cap .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s linear}
+.demo-cap p{flex:1;font-size:13.5px;line-height:1.45;color:var(--ink);margin:0;font-weight:500}
+.demo-cap button{font:700 12px/1 'Inter',sans-serif;color:var(--ink2);padding:7px 10px;border-radius:12px;border:1px solid #444;flex:none}
+.finger{position:absolute;z-index:90;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.22);
+  border:2px solid rgba(255,255,255,.95);box-shadow:0 4px 14px rgba(0,0,0,.35);pointer-events:none;opacity:0;left:50%;top:60%;
+  transition:left .32s cubic-bezier(.4,0,.2,1),top .32s cubic-bezier(.4,0,.2,1),opacity .2s,transform .15s}
+.finger.show{opacity:1}
+.finger.press{transform:scale(.78);background:rgba(255,255,255,.4)}
+.qr{display:flex;align-items:center;gap:12px;background:#262626;border:1px solid var(--hair);border-radius:16px;padding:10px 16px 10px 10px;text-align:left}
+.qr img{width:123px;height:123px;display:block;image-rendering:pixelated;border-radius:6px}
+.qr span{font-size:12.5px;line-height:1.45;color:var(--ink2)}
+.qr b{display:block;color:var(--ink);font-size:13.5px}
+@media(max-width:1080px){.qr{display:none}}
+
+#view-proto .tools{order:0} #view-proto .demo-cap{order:1} #view-proto .phone{order:2} #view-proto .chips{order:3}
+#view-proto .chiphint{order:4} #view-proto .qr{order:5}
+/* on a phone: the prototype is the screen */
+@media(max-width:500px){
+  #view-proto .phonecol{padding:0 0 28px;gap:14px}
+  #view-proto .phone{width:100vw;height:calc(100svh - 58px);min-height:640px;border:0;border-radius:0;box-shadow:none;order:1}
+  #view-proto .phone-in{border-radius:0}
+  #view-proto .island,#view-proto .sbar,#view-proto .homebar{display:none}
+  #view-proto .scr-top{padding-top:16px}
+  #view-proto .scr-foot{padding-bottom:18px}
+  #view-proto .scr--pay .scr-top{padding-top:0}
+  #view-proto .tg-ox{top:14px}
+  #view-proto .tg-pillout{top:12px}
+  #view-proto .tg-omark{margin-top:30px}
+  #view-proto .tools{order:3;padding:0 12px}
+  #view-proto .demo-cap{position:fixed;left:12px;right:12px;bottom:12px;width:auto;max-width:none;z-index:95}
+  #view-proto .chips{order:4;padding:0 12px}
+  #view-proto .chiphint{order:5}
+}
+
+/* overview: walkthrough button */
+.herobtns{display:flex;justify-content:center;margin-top:30px}
+.ghostbtn{display:inline-flex;align-items:center;gap:10px;background:#262626;border:1px solid var(--hair2);color:var(--ink);font-size:14px;
+  font-weight:700;padding:9px 20px 9px 9px;border-radius:30px;transition:.16s}
+.ghostbtn:hover{background:#2E2E2E}
+.ghostbtn .pl{width:30px;height:30px;border-radius:50%;background:var(--accent);display:grid;place-items:center}
+.ghostbtn .pl svg{width:12px;height:12px;fill:var(--accent-on);margin-left:2px}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:470px;margin:0 auto}
+.chip{padding:7px 13px;border-radius:20px;border:1px solid #3A3A3A;background:#262626;
+  font:600 12px/1 'Inter',sans-serif;color:var(--ink2);transition:.14s}
+.chip:hover{color:var(--ink);border-color:#555}
+.chip.offer{border-style:dashed;border-color:var(--accent);color:var(--accent-lift)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-on);border-style:solid}
+.chiphint{text-align:center;font-size:11px;color:var(--ink3);margin:0;max-width:430px}
+
+/* ============ the short panel ============ */
+.pn{padding:30px 30px 60px}
+.pn-n{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+.pn-n.ctx{color:var(--panel-muted)}
+.pn-t{font-size:23px;line-height:1.18;font-weight:700;letter-spacing:-.028em;margin:8px 0 0;color:var(--panel-ink)}
+.pn-hyp{font-size:15px;line-height:1.62;color:#2E353B;margin:16px 0 0}
+.pn-hyp b{font-weight:700;color:var(--panel-ink)}
+.pn-out{margin-top:22px;border-top:1px solid var(--panel-line);padding-top:18px}
+.pn-out .lab{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--panel-muted)}
+.pn-out .v{font-size:31px;font-weight:700;letter-spacing:-.035em;color:var(--accent-ink);margin-top:7px;line-height:1}
+.pn-kept{margin-top:22px;font-size:12.5px;line-height:1.55;color:var(--panel-muted)}
+.pn-kept b{color:#2E353B;font-weight:700}
+.pn-foot{font-size:11.5px;line-height:1.55;color:var(--panel-muted);border-top:1px solid var(--panel-line);
+  padding-top:14px;margin-top:26px}
+.pn-sep{height:1px;background:var(--panel-line);margin:26px 0}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-in">
+    <div class="nav-brand">
+      <img src="img/icon.png" alt="Toggle VPN">
+      <b>Growth Audit</b><span>· Toggle VPN</span>
+    </div>
+    <div class="nav-links">
+      <button class="on" data-view="over">Overview</button>
+      <button data-view="proto">Prototype</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= OVERVIEW ======================= -->
+<div class="view on" id="view-over">
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Growth Audit · November 2026</div>
+    <h1>Toggle VPN</h1>
+    <p class="lede">Five ideas to unlock more revenue from the traffic you already have.</p>
+    <div class="meta">Prepared by <b>Adapty</b> · based on your live iOS flow and your App Store listing</div>
+    <div class="herobtns"><button class="ghostbtn" data-demo><span class="pl"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></svg></span>Watch the 30-second walkthrough</button></div>
+    <div class="stats">
+      <div class="stat"><b>30,000+</b><span>apps run subscriptions<br>on Adapty</span></div>
+      <div class="stat"><b>5</b><span>ideas, each rebuilt<br>as a working screen</span></div>
+      <div class="stat"><b>0</b><span>design changes<br>to your art direction</span></div>
+    </div>
+
+    <div class="fb">
+      <div class="fb-k">Built in Adapty Flow Builder</div>
+      <div class="fb-i">
+        <span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <p><b>Millions of dollars</b> in subscription revenue pass through Flow Builder every month.</p>
+      </div>
+      <div class="fb-i">
+        <span class="tick"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <p><b>Nearly 500 apps</b> actively build their paywalls and onboarding in it — plenty of them past $100K MRR.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="wrap">
+    <div class="sec-k">What this is</div>
+    <h2>We opened Toggle VPN the way a new user does, then rebuilt the parts we think are leaving money on the table.</h2>
+    <p class="body">Adapty powers subscriptions for <b>30,000+ apps</b>, so we get to see what actually moves conversion and ARPU across the market rather than inside one app. We pointed that at Toggle: installed it, went through the first screens, read your App Store listing and your pricing page, and looked for gaps between what you already have and what you currently show people.</p>
+    <p class="body">What follows is five ideas — not fifteen. Each one is a hypothesis you can A/B test, and each one is built into a clickable prototype so you can see it rather than imagine it. <b>The prototype uses your design, not ours.</b></p>
+
+    <div class="notes">
+      <div class="note">
+        <h4>We did not redesign your app</h4>
+        <p>Every screen in the prototype is yours: your near-black screens, your green, your pill plan cards, your wall of streaming logos and your toggle switch. Only the order changed, plus a few things you already own but do not show at the right moment. This is not a design pitch.</p>
+      </div>
+      <div class="note">
+        <h4>You may have tested some of this</h4>
+        <p>We are working from the outside, so we cannot see your experiment history. If one of these is something you have already run, tell us — we will go deeper on the rest rather than repeat it.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="rule"></div>
+
+<div class="sec">
+  <div class="wrap">
+    <div class="sec-k">The five ideas</div>
+    <h2>Ranked by what we would test first.</h2>
+    <p class="body">Each one links straight to the screen in the prototype.</p>
+
+    <div class="ideas">
+      <button class="idea" data-jump="offer">
+        <span class="no">01</span>
+        <span>
+          <h3>Give a second chance when they close the paywall</h3>
+          <p>Today the X on your paywall goes straight to Create account. Someone who says no to $59.99 a year or $12.99 a week never sees another price. Your $11.99 monthly plan is already in the App Store and on your pricing page. Offer it there, billed today, no trial.</p>
+          <span class="seeit">See the screen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </span>
+        <span class="out"><b>ARPU +10–15%</b><span>second chance</span></span>
+      </button>
+
+      <button class="idea" data-jump="use">
+        <span class="no">02</span>
+        <span>
+          <h3>Ask what they need a VPN for, then read it back</h3>
+          <p>The flow goes from your privacy screen straight to the price. Two taps (what they will use Toggle for, and how many devices) let the next screen say “streaming and public Wi-Fi, 3 devices, ready”. Every line maps to a feature you already ship: residential IPs, Kill Switch, 10 devices on one account.</p>
+          <span class="seeit">See the screen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </span>
+        <span class="out"><b>CR +10–20%</b><span>to purchase</span></span>
+      </button>
+
+      <button class="idea" data-jump="paywall">
+        <span class="no">03</span>
+        <span>
+          <h3>Put their reason in the paywall headline</h3>
+          <p>“Use VPN to Watch Anything” is right for someone who came for Netflix. Someone who came for live sports, café Wi-Fi or a trip abroad sees the same headline and the same four streaming lines. Your website already has the copy for each of those uses.</p>
+          <span class="seeit">See the screen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </span>
+        <span class="out"><b>CR +15–20%</b><span>to purchase</span></span>
+      </button>
+
+      <button class="idea" data-jump="payoff">
+        <span class="no">04</span>
+        <span>
+          <h3>Show your 600K+ installs before the price</h3>
+          <p>Your App Store screenshots lead with 600K+ installs, and your website carries a wall of customer reviews. None of it appears in the flow. Put it on the screen right before the paywall, next to one of those reviews.</p>
+          <span class="seeit">See the screen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </span>
+        <span class="out"><b>CR +10–15%</b><span>to purchase</span></span>
+      </button>
+
+      <button class="idea" data-jump="paywall">
+        <span class="no">05</span>
+        <span>
+          <h3>Put the free trial on the plan you recommend</h3>
+          <p>The “3 Days Free” card is the $12.99 weekly plan. Yearly is preselected and charges $59.99 today, and some of your App Store reviews describe charges people did not expect. Your listing says yearly comes with a 3-day trial too. Show it, with the date the charge lands.</p>
+          <span class="seeit">See the screen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </span>
+        <span class="out"><b>CR +5–15%</b><span>to purchase</span></span>
+      </button>
+    </div>
+
+    <div class="band">
+      <div class="txt">
+        <div class="lab">Potential outcome</div>
+        <p>Run together, these five change the same funnel at three points: what happens before the price, what the paywall says, and what happens when someone says no.</p>
+      </div>
+      <div class="nums">
+        <div><b>+25%</b><span>CR to purchase</span></div>
+        <div><b>+15%</b><span>ARPU</span></div>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <div class="qr"><img src="img/qr.svg" alt="QR code for the prototype"><span><b>Or open it on your phone</b>Scan to try the flow in your hand.</span></div>
+      <button class="bigbtn" data-view="proto">Open the prototype
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="foot">
+  <div class="wrap">
+    Impact ranges are Adapty's expected effect from teardowns and A/B tests across subscription apps — not measured lift for Toggle VPN. Every price, figure, review and feature line here and in the prototype comes from Toggle VPN's own App Store listing, website, pricing page and in-app screens.
+  </div>
+</div>
+</div><!-- /view-over -->
+
+<!-- ======================= PROTOTYPE ======================= -->
+<div class="view" id="view-proto">
+<div class="stage">
+  <div class="phonecol">
+    <div class="tools" id="tools">
+      <div class="seg" id="segLang"><button data-lang="en" class="on">EN</button><button data-lang="es">ES</button><button data-lang="de">DE</button></div>
+      <div class="seg" id="segTheme"><button data-theme="light">Light</button><button data-theme="dark" class="on">Dark</button></div>
+      <button class="demo-btn" id="demoBtn"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg>30-sec walkthrough</button>
+    </div>
+    <div class="phone">
+      <div class="phone-in" id="phoneIn">
+        <div class="island"></div>
+        <div class="sbar" id="sbar">
+          <span>9:41</span>
+          <span class="glyphs">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7.5" width="3" height="3.5" rx="1"/><rect x="4.5" y="5.5" width="3" height="5.5" rx="1"/><rect x="9" y="3" width="3" height="8" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M8 10.5 5.6 7.9a3.4 3.4 0 0 1 4.8 0L8 10.5Zm0-5.6a6.4 6.4 0 0 0-4.5 1.9L1.7 4.9a9 9 0 0 1 12.6 0l-1.8 1.9A6.4 6.4 0 0 0 8 4.9Z"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".6" y=".6" width="20" height="10.8" rx="3" stroke="currentColor" stroke-opacity=".5"/><rect x="2.2" y="2.2" width="16.5" height="7.6" rx="1.8" fill="currentColor"/><path d="M22.3 4.1v3.8a2 2 0 0 0 0-3.8Z" fill="currentColor" fill-opacity=".5"/></svg>
+          </span>
+        </div>
+        <div class="homebar" id="homebar"></div>
+        <div class="finger" id="finger"></div>
+        <div class="screenwrap">
+
+<!-- PRIVACY -->
+<section class="scr" data-id="privacy">
+  <div class="scr-top"></div>
+  <div class="scr-body tg-pp">
+    <h2 class="tg-pp-h" data-t="pp.h"></h2>
+    <h3 class="tg-pp-k" data-t="pp.k"></h3>
+    <p data-t="pp.p1"></p>
+    <p data-t="pp.p2"></p>
+    <p data-t="pp.p3"></p>
+    <a class="tg-more" data-t="pp.more"></a>
+  </div>
+  <div class="scr-foot"><button class="tg-btn" data-go="use" data-t="pp.cta"></button></div>
+</section>
+
+<!-- USE -->
+<section class="scr" data-id="use">
+  <div class="scr-top">
+    <div class="tg-nav">
+      <button class="tg-circ" data-back aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="tg-prog"><i style="width:50%"></i></div>
+    </div>
+    <h2 class="tg-h" data-t="use.h"></h2>
+    <p class="tg-sub" data-t="use.sub"></p>
+  </div>
+  <div class="scr-body"><div class="tg-rows" id="useList"></div><div style="height:10px"></div></div>
+  <div class="scr-foot"><button class="tg-btn" id="useBtn" data-go="devices" data-t="cont"></button></div>
+</section>
+
+<!-- DEVICES -->
+<section class="scr" data-id="devices">
+  <div class="scr-top">
+    <div class="tg-nav">
+      <button class="tg-circ" data-back aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="tg-prog"><i style="width:100%"></i></div>
+    </div>
+    <h2 class="tg-h" data-t="dev.h"></h2>
+  </div>
+  <div class="scr-body">
+    <div class="tg-count">
+      <button class="tg-circ" id="devMinus" aria-label="Fewer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+      <b id="devN">3</b>
+      <button class="tg-circ" id="devPlus" aria-label="More"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    </div>
+    <p class="tg-devlab" id="devLab"></p>
+    <div class="tg-devs" id="devGrid"></div>
+    <p class="tg-plat" data-t="dev.plat"></p>
+  </div>
+  <div class="scr-foot"><button class="tg-btn" data-go="loader" data-t="cont"></button></div>
+</section>
+
+<!-- LOADER -->
+<section class="scr" data-id="loader">
+  <div class="scr-top" style="padding-top:0"></div>
+  <div class="scr-body">
+    <div class="tg-loadwrap">
+      <div class="tg-word"><span>t</span><span class="ws" id="loadSw"><i></i></span><span>ggle</span></div>
+      <h2 class="tg-load-h" data-t="load.h"></h2>
+      <div class="tg-lsteps" id="loadSteps"></div>
+      <div class="tg-quote"><p id="qText">—</p><b id="qWho">—</b></div>
+      <div class="tg-qd" id="qDots"><i class="on"></i><i></i><i></i><i></i></div>
+    </div>
+  </div>
+  <div class="scr-foot"></div>
+</section>
+
+<!-- PAYOFF -->
+<section class="scr" data-id="payoff">
+  <div class="scr-top">
+    <div class="tg-nav">
+      <button class="tg-circ" data-back aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    </div>
+    <h2 class="tg-h" style="margin-top:14px" data-t="po.h"></h2>
+  </div>
+  <div class="scr-body">
+    <div class="tg-card" id="poList"></div>
+    <div class="tg-proof">
+      <svg viewBox="0 0 30 58" id="laurL"></svg>
+      <div><b>600K+</b><span data-t="po.inst"></span></div>
+      <svg viewBox="0 0 30 58" id="laurR" style="transform:scaleX(-1)"></svg>
+    </div>
+    <div class="tg-rev"><span id="poRev"></span><b id="poRevS"></b></div>
+    <div style="height:12px"></div>
+  </div>
+  <div class="scr-foot">
+    <button class="tg-btn" data-go="paywall" data-t="cont"></button>
+    <p class="tg-help" data-t="po.help"></p>
+  </div>
+</section>
+
+<!-- PAYWALL -->
+<section class="scr scr--pay" data-id="paywall">
+  <div class="scr-top">
+    <div class="tg-tiles">
+      <img src="img/tiles.jpg" alt="Prime Video, Disney+, Hulu, BBC iPlayer, UFC, Crunchyroll, Sling, fubo">
+      <button class="tg-x" id="payClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <h2 class="tg-payh" id="payH"></h2>
+  </div>
+  <div class="scr-body">
+    <div class="tg-feat" id="featList"></div>
+    <div class="tg-plans" id="planList">
+      <button class="tg-plan" data-v="week">
+        <span class="tg-radio"><i></i></span>
+        <span class="l" data-t="pw.free3"></span>
+        <span class="r"><span data-t="pw.then" style="display:inline;font-weight:600;font-size:16px;color:inherit"></span> $12.99<span data-t="pw.perw"></span></span>
+      </button>
+      <button class="tg-plan" data-v="year">
+        <span class="tg-badge" data-t="pw.best"></span>
+        <span class="tg-radio"><i></i></span>
+        <span class="l"><span data-t="pw.year"></span><em data-t="pw.yearS"></em></span>
+        <span class="r">$1.15<span data-t="pw.perw"></span></span>
+      </button>
+    </div>
+    <div style="height:6px"></div>
+  </div>
+  <div class="scr-foot">
+    <button class="tg-btn" id="payCta" data-t="pw.cta"></button>
+    <p class="tg-help" id="payHelp"></p>
+    <div class="tg-legal"><span data-t="lg.priv"></span><i></i><span data-t="lg.terms"></span></div>
+  </div>
+</section>
+
+<!-- OFFER ON CLOSE -->
+<section class="scr scr--offer sheet" data-id="offer">
+  <button class="tg-ox" id="offClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  <div class="scr-top" style="padding-top:44px">
+    <div class="tg-omark"><span class="tg-sw on" id="offSw"><i></i></span></div>
+    <h2 class="tg-oh" data-t="of.h"></h2>
+    <p class="tg-os" data-t="of.s"></p>
+  </div>
+  <div class="scr-body">
+    <div class="tg-cmp">
+      <div class="tg-crow was"><span class="l"><span data-t="of.wk"></span><span data-t="of.wkS"></span></span><span class="r">$56.29<span data-t="of.perm"></span></span></div>
+      <div class="tg-crow on"><span class="tg-badge" data-t="of.save"></span><span class="l"><span data-t="of.mo"></span><span data-t="of.moS"></span></span><span class="r">$11.99<span data-t="of.perm"></span></span></div>
+    </div>
+    <div class="tg-incl" id="offIncl"></div>
+  </div>
+  <div class="scr-foot">
+    <button class="tg-btn" id="offerCta" data-t="of.cta"></button>
+    <p class="tg-help" data-t="of.help"></p>
+  </div>
+</section>
+
+<!-- ACCOUNT (their welcome) -->
+<section class="scr" data-id="account">
+  <span class="tg-pillout" data-t="ac.sup"></span>
+  <div class="scr-top"></div>
+  <div class="scr-body">
+    <div class="tg-wel">
+      <h2 data-th="ac.h"></h2>
+      <p data-t="ac.p"></p>
+      <button class="tg-btn" data-go="privacy" data-t="ac.cta"></button>
+    </div>
+  </div>
+  <div class="scr-foot"><p class="tg-login" data-th="ac.login"></p></div>
+</section>
+
+        </div>
+      </div>
+    </div>
+    <div class="demo-cap hidden" id="demoCap"><div class="bar"><i id="demoProg"></i></div><p id="demoTxt"></p><button id="demoStop">Stop</button></div>
+    <div class="chips" id="chips"></div>
+    <p class="chiphint">Jump to any screen — answers already filled in.</p>
+    <div class="qr"><img src="img/qr.svg" alt="QR code for this prototype"><span><b>Open it on your phone</b>Scan to try the flow in your hand.</span></div>
+  </div>
+  <div class="panelcol"><div class="pn" id="panel"></div></div>
+</div>
+</div><!-- /view-proto -->
+
+<script>
+/* ================= copy, per language (phone screens only) ================= */
+var LANGS = ['en','es','de'];
+var T = {
+ 'pp.h':   ["Privacy Policy","Política de privacidad","Datenschutz"],
+ 'pp.k':   ["We respect your privacy","Respetamos tu privacidad","Wir respektieren deine Privatsphäre"],
+ 'pp.p1':  ["You have a right to privacy. That’s why we never store activity logs and don’t ask for personal information.","Tienes derecho a la privacidad. Por eso nunca guardamos registros de actividad ni pedimos datos personales.","Du hast ein Recht auf Privatsphäre. Deshalb speichern wir nie Aktivitätsprotokolle und fragen nicht nach persönlichen Daten."],
+ 'pp.p2':  ["In some situations we might process personal data that you choose to send, for example if you email us.","En algunos casos podemos tratar datos personales que tú decidas enviarnos, por ejemplo si nos escribes un email.","In manchen Fällen verarbeiten wir Daten, die du uns selbst schickst, zum Beispiel per E-Mail."],
+ 'pp.p3':  ["We strongly believe in retaining as little data as possible because we want you to remain private.","Creemos en guardar los mínimos datos posibles, porque queremos que sigas siendo privado.","Wir speichern so wenig Daten wie möglich, weil du privat bleiben sollst."],
+ 'pp.more':["More details","Más detalles","Mehr erfahren"],
+ 'pp.cta': ["Agree and continue","Aceptar y continuar","Zustimmen und weiter"],
+ 'cont':   ["Continue","Continuar","Weiter"],
+ 'use.h':  ["What will you use Toggle for?","¿Para qué usarás Toggle?","Wofür nutzt du Toggle?"],
+ 'use.sub':["Pick all that apply.","Elige todas las que quieras.","Wähle alles, was passt."],
+ 'dev.h':  ["How many devices do you want to protect?","¿Cuántos dispositivos quieres proteger?","Wie viele Geräte willst du schützen?"],
+ 'dev.lab':["{n} of 10 on one account","{n} de 10 en una cuenta","{n} von 10 mit einem Konto"],
+ 'dev.plat':["iPhone, iPad, Mac, Windows, Android, Linux, Apple TV and Android TV.","iPhone, iPad, Mac, Windows, Android, Linux, Apple TV y Android TV.","iPhone, iPad, Mac, Windows, Android, Linux, Apple TV und Android TV."],
+ 'load.h': ["Setting up your Toggle…","Preparando tu Toggle…","Dein Toggle wird eingerichtet…"],
+ 'load.dev':["Getting {n} devices ready on one account","Preparando {n} dispositivos en una cuenta","{n} Geräte werden mit einem Konto verbunden"],
+ 'load.dev1':["Getting your device ready","Preparando tu dispositivo","Dein Gerät wird vorbereitet"],
+ 'load.log':["No logs. Nothing about you is stored.","Sin registros. No guardamos nada sobre ti.","Keine Logs. Nichts über dich wird gespeichert."],
+ 'po.h':   ["Your Toggle is ready","Tu Toggle está listo","Dein Toggle ist bereit"],
+ 'po.dev': ["{n} devices covered","{n} dispositivos protegidos","{n} Geräte geschützt"],
+ 'po.dev1':["1 device covered","1 dispositivo protegido","1 Gerät geschützt"],
+ 'po.devS':["Room for {m} more on the same account","Caben {m} más en la misma cuenta","Platz für {m} weitere im selben Konto"],
+ 'po.devS0':["All 10 on one account","Las 10 en una sola cuenta","Alle 10 mit einem Konto"],
+ 'po.also':["Also ready","También listo","Auch bereit"],
+ 'po.fam': ["Family Sharing","En familia","Familienfreigabe"],
+ 'po.famS':["Share with up to five family members","Compártelo con hasta cinco familiares","Teile mit bis zu fünf Familienmitgliedern"],
+ 'po.inst':["installs","instalaciones","Installationen"],
+ 'po.help':["No username, no password, no email. Nothing.","Sin usuario, sin contraseña, sin email. Nada.","Kein Benutzername, kein Passwort, keine E-Mail. Nichts."],
+ 'pw.free3':["3 Days Free","3 días gratis","3 Tage gratis"],
+ 'pw.then':["then","luego","dann"],
+ 'pw.perw':["per week","por semana","pro Woche"],
+ 'pw.best':["BEST VALUE · 3 DAYS FREE","MEJOR PRECIO · 3 DÍAS GRATIS","BESTER PREIS · 3 TAGE GRATIS"],
+ 'pw.year':["Yearly Plan","Plan anual","Jahresabo"],
+ 'pw.yearS':["$59.99 per year","$59.99 al año","$59.99 pro Jahr"],
+ 'pw.cta': ["Start 3 Days Free","Empezar 3 días gratis","3 Tage gratis starten"],
+ 'pw.helpY':["Today <b>$0</b>. On {d}, $59.99, then yearly. Cancel anytime.","Hoy <b>$0</b>. El {d}, $59.99 y luego cada año. Cancela cuando quieras.","Heute <b>$0</b>. Am {d} $59.99, dann jährlich. Jederzeit kündbar."],
+ 'pw.helpW':["Today <b>$0</b>. On {d}, $12.99, then weekly. Cancel anytime.","Hoy <b>$0</b>. El {d}, $12.99 y luego cada semana. Cancela cuando quieras.","Heute <b>$0</b>. Am {d} $12.99, dann wöchentlich. Jederzeit kündbar."],
+ 'lg.priv':["Privacy Policy","Privacidad","Datenschutz"],
+ 'lg.terms':["Terms of Use","Condiciones","Nutzungsbedingungen"],
+ 'of.h':   ["Try one month instead","Prueba un mes","Teste erst einen Monat"],
+ 'of.s':   ["No trial, no surprises. One price, billed today.","Sin prueba, sin sorpresas. Un precio, cobrado hoy.","Kein Testzeitraum, keine Überraschung. Ein Preis, heute bezahlt."],
+ 'of.wk':  ["Weekly plan","Plan semanal","Wochenabo"],
+ 'of.wkS': ["$12.99 × 52 weeks ÷ 12","$12.99 × 52 semanas ÷ 12","$12.99 × 52 Wochen ÷ 12"],
+ 'of.mo':  ["Monthly plan","Plan mensual","Monatsabo"],
+ 'of.moS': ["Billed monthly","Se cobra cada mes","Monatlich bezahlt"],
+ 'of.perm':["per month","al mes","pro Monat"],
+ 'of.save':["SAVE 79%","AHORRA 79%","79% SPAREN"],
+ 'of.cta': ["Get 1 Month for $11.99","1 mes por $11.99","1 Monat für $11.99"],
+ 'of.help':["Billed $11.99 today. Renews monthly. Cancel anytime.","Se cobran $11.99 hoy. Se renueva cada mes. Cancela cuando quieras.","Heute $11.99. Verlängert sich monatlich. Jederzeit kündbar."],
+ 'of.i1':  ["The same app on up to 10 devices","La misma app en hasta 10 dispositivos","Dieselbe App auf bis zu 10 Geräten"],
+ 'of.i2':  ["1,400+ servers worldwide","Más de 1.400 servidores en el mundo","Über 1.400 Server weltweit"],
+ 'of.i3':  ["No logs, ever","Nunca guardamos registros","Niemals Logs"],
+ 'ac.sup': ["Support Center","Centro de ayuda","Hilfe-Center"],
+ 'ac.h':   ["Welcome to<br>Toggle VPN","Te damos la bienvenida<br>a Toggle VPN","Willkommen bei<br>Toggle VPN"],
+ 'ac.p':   ["We don’t ask for any personal information. No username, no password, no email. Nothing.","No pedimos datos personales. Sin usuario, sin contraseña, sin email. Nada.","Wir fragen nach keinen persönlichen Daten. Kein Benutzername, kein Passwort, keine E-Mail. Nichts."],
+ 'ac.cta': ["Create account","Crear cuenta","Konto erstellen"],
+ 'ac.login':["Already have an account? <b>Log in</b>","¿Ya tienes cuenta? <b>Inicia sesión</b>","Schon ein Konto? <b>Anmelden</b>"]
+};
+var IC = {
+  stream:'<rect x="3" y="5" width="18" height="12" rx="2.5"/><path d="M10 8.8v5.4l4.6-2.7z"/><path d="M8 20h8"/>',
+  sports:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.6l3.6 2.6-1.4 4.2H9.8L8.4 10.2z"/><path d="M12 3.5v4.1M20 10.2l-4.4 0M15.4 19.5l-1.2-5.1M8.6 19.5l1.2-5.1M4 10.2l4.4 0"/>',
+  wifi:'<path d="M2.5 9a13.5 13.5 0 0 1 19 0M5.8 12.4a9 9 0 0 1 12.4 0M9.1 15.8a4.4 4.4 0 0 1 5.8 0"/><circle cx="12" cy="19" r=".6"/>',
+  travel:'<path d="M10.2 13.8 4 12l-1.3 1.3 5.3 2.8 2.8 5.3 1.3-1.3-1.8-6.2 4.7-4.7c1.3-1.3 3.6-4.4 2.8-5.2s-3.9 1.5-5.2 2.8z"/>',
+  gaming:'<path d="M7 8h10a4 4 0 0 1 4 4.3l-.5 3.5a2.4 2.4 0 0 1-4.2 1.2L14.6 15H9.4l-1.7 2a2.4 2.4 0 0 1-4.2-1.2L3 12.3A4 4 0 0 1 7 8z"/><path d="M8 10.6v3M6.5 12.1h3"/><circle cx="15.8" cy="11.2" r=".5"/><circle cx="17.3" cy="12.8" r=".5"/>',
+  devices:'<rect x="2.5" y="5" width="13" height="9" rx="1.6"/><path d="M1 17h16"/><rect x="17" y="8" width="6" height="11" rx="1.4"/>',
+  family:'<circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M2.5 19c.6-3.3 2.8-5 5.5-5s4.9 1.7 5.5 5M14 14.6c.9-.6 1.9-.9 3-.9 2.2 0 3.9 1.4 4.4 4.3"/>',
+  check:'<path d="M4.5 12.5l4.6 4.6L19.5 6.8"/>'
+};
+function ico(k,cls){ return '<svg class="'+(cls||'ic')+'" viewBox="0 0 24 24">'+IC[k]+'</svg>'; }
+var USES = {
+ stream:{l:['Movies & shows','Películas y series','Filme & Serien'],
+   h:['Use VPN to<br>Watch Anything','Usa la VPN para<br>ver lo que quieras','Mit VPN<br>alles streamen'],
+   f:[['Watch Netflix US/UK/JP/KR','10k+ titles not in your region','Works with all streaming platforms','Stream in HD/4K quality'],
+      ['Netflix de EE. UU., Reino Unido, Japón y Corea','Más de 10k títulos fuera de tu región','Funciona con todas las plataformas','Streaming en HD/4K'],
+      ['Netflix aus USA, UK, Japan und Korea','Über 10k Titel außerhalb deiner Region','Funktioniert mit allen Streamingdiensten','Streaming in HD/4K']],
+   ld:['Unblocking Netflix, Disney+ and Hulu','Desbloqueando Netflix, Disney+ y Hulu','Netflix, Disney+ und Hulu werden freigeschaltet'],
+   po:['Residential IPs for Netflix, Disney+, Hulu','IP residenciales para Netflix, Disney+, Hulu','Private IPs für Netflix, Disney+, Hulu']},
+ sports:{l:['Live sports','Deportes en directo','Live-Sport'],
+   h:['Use VPN to<br>Watch Every Game','Usa la VPN para<br>ver cada partido','Mit VPN<br>jedes Spiel sehen'],
+   f:[['Live sports on ESPN and more','Stream in HD/4K quality','No slowdowns or buffering','Works with all streaming platforms'],
+      ['Deportes en directo en ESPN y más','Streaming en HD/4K','Sin cortes ni esperas','Funciona con todas las plataformas'],
+      ['Live-Sport auf ESPN und mehr','Streaming in HD/4K','Kein Ruckeln, kein Puffern','Funktioniert mit allen Streamingdiensten']],
+   ld:['Tuning for live sports in HD/4K','Ajustando para deportes en HD/4K','Optimiert für Live-Sport in HD/4K'],
+   po:['Live sports in HD/4K, no buffering','Deportes en HD/4K, sin esperas','Live-Sport in HD/4K, ohne Puffern']},
+ wifi:{l:['Public Wi‑Fi','Wi‑Fi público','Öffentliches WLAN'],
+   h:['Use VPN on<br>Any Wi‑Fi','Usa la VPN en<br>cualquier Wi‑Fi','Mit VPN<br>in jedem WLAN'],
+   f:[['Safe in cafes, airports and hotels','No logs — we never track your activity','Kill Switch and Ad Blocker built in','ChaCha20 256-bit encryption'],
+      ['Seguro en cafés, aeropuertos y hoteles','Sin registros: nunca seguimos tu actividad','Kill Switch y bloqueador de anuncios','Cifrado ChaCha20 de 256 bits'],
+      ['Sicher in Cafés, Flughäfen und Hotels','Keine Logs: wir verfolgen dich nie','Kill Switch und Werbeblocker inklusive','ChaCha20-Verschlüsselung mit 256 Bit']],
+   ld:['Turning on Kill Switch for public Wi‑Fi','Activando el Kill Switch para Wi‑Fi público','Kill Switch für öffentliches WLAN wird aktiviert'],
+   po:['Kill Switch on for public Wi‑Fi','Kill Switch activo en Wi‑Fi público','Kill Switch für öffentliches WLAN an']},
+ travel:{l:['Travel','Viajes','Reisen'],
+   h:['Use VPN to<br>Feel at Home Anywhere','Usa la VPN para<br>sentirte en casa','Mit VPN<br>überall zu Hause'],
+   f:[['Your home apps and banking abroad','WhatsApp and Teams calls, unblocked','1,400+ servers worldwide','Residential IPs for trusted logins'],
+      ['Tus apps y tu banco en el extranjero','WhatsApp y Teams sin bloqueos','Más de 1.400 servidores','IP residenciales para accesos fiables'],
+      ['Deine Apps und dein Banking im Ausland','WhatsApp- und Teams-Anrufe ohne Sperren','Über 1.400 Server weltweit','Private IPs für sichere Logins']],
+   ld:['Getting your home apps ready for travel','Preparando tus apps para viajar','Deine Apps werden reisefertig gemacht'],
+   po:['Home apps and calls, wherever you are','Tus apps y llamadas, estés donde estés','Deine Apps und Anrufe, egal wo du bist']},
+ gaming:{l:['Gaming','Juegos','Gaming'],
+   h:['Use VPN to<br>Play Without Lag','Usa la VPN para<br>jugar sin lag','Mit VPN<br>ohne Lag spielen'],
+   f:[['Low ping and DDoS protection','Play on servers in other regions','Split Tunneling: pick which apps use VPN','1,400+ servers worldwide'],
+      ['Ping bajo y protección DDoS','Juega en servidores de otras regiones','Split Tunneling: elige qué apps usan la VPN','Más de 1.400 servidores en el mundo'],
+      ['Niedriger Ping und DDoS-Schutz','Spiele auf Servern anderer Regionen','Split Tunneling: du wählst die Apps','Über 1.400 Server weltweit']],
+   ld:['Turning on Split Tunneling for games','Activando Split Tunneling para juegos','Split Tunneling für Spiele wird aktiviert'],
+   po:['Low ping, Split Tunneling for games','Ping bajo y Split Tunneling para jugar','Niedriger Ping, Split Tunneling fürs Gaming']}
+};
+var USE_ORDER = ['stream','sports','wifi','travel','gaming'];
+/* verbatim from toggle.org — never translated */
+var QUOTES = {
+  stream:['A VPN that actually works with my streaming apps. No buffering, no weird blocks. Just does the job.','4.9'],
+  sports:['These ultra-fast servers really make a difference. Streaming and gaming actually feel smooth','4.7'],
+  wifi:  ['Setup was incredibly fast. Connected in under a minute. I feel more safe on public Wi-Fi now.','4.7'],
+  travel:['Toggle was a life-saver during my last business trip. I could access all my work files and use WhatsApp without any problems. Highly recommend.','4.9'],
+  gaming:['Super responsive, secure VPN — lets me play on foreign servers without lag.','4.7']
+};
+var LQ = [
+  ['Toggle lets me watch my home country’s Netflix with zero hassle, it’s that simple','4.7'],
+  ['A VPN that actually works with my streaming apps. No buffering, no weird blocks. Just does the job.','4.9'],
+  ['Setup was incredibly fast. Connected in under a minute. I feel more safe on public Wi-Fi now.','4.7'],
+  ['One account covers my whole family on 10 devices. This private vpn allows me to relax, knowing I have a secure connection.','4.9']
+];
+var LOCALE = {en:'en-US', es:'es-ES', de:'de-DE'};
+
+/* ================= state ================= */
+var S0 = {lang:'en', theme:'dark'};
+function defaults(){ return { lang:S0.lang, theme:S0.theme, uses:['stream','sports'], dev:3, plan:'year' }; }
+var S = defaults();
+function L(){ return LANGS.indexOf(S.lang); }
+function t(k,v){ var s=(T[k]||[k])[L()]; if(v) Object.keys(v).forEach(function(x){ s=s.split('{'+x+'}').join(v[x]); }); return s; }
+function picked(){ return USE_ORDER.filter(function(k){ return S.uses.indexOf(k)>-1; }); }
+function lead(){ return picked()[0] || 'stream'; }
+
+/* laurels — from your App Store screenshot */
+(function(){ var h=''; for(var i=0;i<6;i++){ var y=48-i*8, x=13+Math.sin(i*.5)*-4;
+  h+='<ellipse cx="'+(x-5)+'" cy="'+y+'" rx="5.5" ry="2.4" transform="rotate('+(-35-i*4)+' '+(x-5)+' '+y+')" fill="var(--tg-green)"/>';
+  h+='<ellipse cx="'+(x+4)+'" cy="'+(y-4)+'" rx="5" ry="2.2" transform="rotate('+(40-i*6)+' '+(x+4)+' '+(y-4)+')" fill="var(--tg-green)"/>'; }
+  h+='<path d="M22 54C9 46 7 26 15 6" stroke="var(--tg-green)" stroke-width="1.6" fill="none"/>';
+  document.getElementById('laurL').innerHTML=h; document.getElementById('laurR').innerHTML=h; })();
+
+/* ================= builders (re-run on language change) ================= */
+function buildUses(){ var g=document.getElementById('useList'); g.innerHTML='';
+  USE_ORDER.forEach(function(k){ var b=document.createElement('button'); b.className='tg-row'; b.dataset.v=k;
+    b.innerHTML=ico(k)+'<span class="lb">'+USES[k].l[L()]+'</span><span class="tg-sw"><i></i></span>';
+    b.addEventListener('click',function(){ var i=S.uses.indexOf(k); if(i>-1) S.uses.splice(i,1); else S.uses.push(k); syncScreen(); });
+    g.appendChild(b); }); }
+var DEVI=['<rect x="7" y="2.5" width="10" height="19" rx="2.4"/><path d="M11 18.5h2"/>','<rect x="3" y="5" width="18" height="11" rx="1.6"/><path d="M1.5 19h21"/>','<rect x="4.5" y="3" width="15" height="18" rx="2"/><path d="M11 18h2"/>','<rect x="2.5" y="4" width="19" height="12.5" rx="1.6"/><path d="M8 20h8M12 16.5V20"/>'];
+function buildDevs(){ var g=document.getElementById('devGrid'), h=''; for(var i=0;i<10;i++) h+='<span><svg viewBox="0 0 24 24">'+DEVI[[0,1,2,3,0,1,2,3,0,1][i]]+'</svg></span>'; g.innerHTML=h; }
+function buildIncl(){ document.getElementById('offIncl').innerHTML=['of.i1','of.i2','of.i3'].map(function(k){ return '<div class="tg-f">'+ico('check','')+'<span>'+t(k)+'</span></div>'; }).join(''); }
+function applyStatic(){
+  document.documentElement.lang=S.lang;
+  document.querySelectorAll('[data-t]').forEach(function(el){ el.textContent=t(el.dataset.t); });
+  document.querySelectorAll('[data-th]').forEach(function(el){ el.innerHTML=t(el.dataset.th); });
+  buildUses(); buildDevs(); buildIncl();
+}
+
+/* ================= everything downstream reads S ================= */
+function fmtDate(d){ return new Intl.DateTimeFormat(LOCALE[S.lang],{month:'short',day:'numeric'}).format(d); }
+function syncScreen(){
+  var li=L(), p=picked(), ld=lead();
+  document.querySelectorAll('#useList .tg-row').forEach(function(b){ b.classList.toggle('on', S.uses.indexOf(b.dataset.v)>-1); });
+  document.getElementById('useBtn').disabled=!p.length;
+  document.getElementById('devN').textContent=S.dev;
+  document.getElementById('devLab').textContent=t('dev.lab',{n:S.dev});
+  document.querySelectorAll('#devGrid span').forEach(function(s,i){ s.classList.toggle('on', i<S.dev); });
+
+  /* loader: their answers, read back */
+  var steps=p.slice(0,2).map(function(k){ return USES[k].ld[li]; });
+  steps.push(S.dev>1 ? t('load.dev',{n:S.dev}) : t('load.dev1')); steps.push(t('load.log'));
+  document.getElementById('loadSteps').innerHTML=steps.map(function(s){ return '<div class="tg-ls"><span class="d"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span>'+s+'</span></div>'; }).join('');
+
+  /* payoff */
+  var rows=p.slice(0,2).map(function(k){ return '<div class="tg-pr">'+ico(k)+'<div><b>'+USES[k].l[li]+'</b>'+USES[k].po[li]+'</div><span class="tg-sw on"><i></i></span></div>'; });
+  if(p.length>2) rows.push('<div class="tg-pr">'+ico('check')+'<div><b>'+t('po.also')+'</b>'+p.slice(2).map(function(k){ return USES[k].l[li]; }).join(', ')+'</div><span class="tg-sw on"><i></i></span></div>');
+  rows.push('<div class="tg-pr">'+ico('devices')+'<div><b>'+(S.dev>1?t('po.dev',{n:S.dev}):t('po.dev1'))+'</b>'+(S.dev<10?t('po.devS',{m:10-S.dev}):t('po.devS0'))+'</div><span class="tg-sw on"><i></i></span></div>');
+  if(S.dev>=3 && p.length<3) rows.push('<div class="tg-pr">'+ico('family')+'<div><b>'+t('po.fam')+'</b>'+t('po.famS')+'</div><span class="tg-sw on"><i></i></span></div>');
+  document.getElementById('poList').innerHTML=rows.join('');
+  var q=QUOTES[ld]; document.getElementById('poRev').textContent='“'+q[0]+'”'; document.getElementById('poRevS').textContent='★ '+q[1]+'/5 · toggle.org';
+
+  /* paywall: their headline, written from the first answer */
+  document.getElementById('payH').innerHTML=USES[ld].h[li];
+  document.getElementById('featList').innerHTML=USES[ld].f[li].map(function(f){ return '<div class="tg-f">'+ico('check','')+'<span>'+f+'</span></div>'; }).join('');
+  document.querySelectorAll('#planList .tg-plan').forEach(function(b){ b.classList.toggle('on', b.dataset.v===S.plan); });
+  var d=new Date(); d.setDate(d.getDate()+3);
+  document.getElementById('payHelp').innerHTML=t(S.plan==='year'?'pw.helpY':'pw.helpW',{d:fmtDate(d)});
+}
+
+/* ================= router ================= */
+var ORDER=['privacy','use','devices','loader','payoff','paywall','offer','account'];
+var LABEL={privacy:'Privacy',use:'Use',devices:'Devices',loader:'Loader',payoff:'Payoff',paywall:'Paywall',offer:'Offer on close',account:'Account'};
+var scr={}, hist=[], cur='privacy', loadTimers=[];
+document.querySelectorAll('.scr').forEach(function(s){ scr[s.dataset.id]=s; });
+
+function chrome(){ var lite=S.theme==='light';
+  document.getElementById('sbar').classList.toggle('dk',lite); document.getElementById('homebar').classList.toggle('dk',lite); }
+function enter(id){ chrome(); paintChips(); paintPanel(); clearLoad();
+  if(id==='loader') runLoader(); }
+function go(id,opts){
+  opts=opts||{}; if(id===cur) return;
+  var from=scr[cur], to=scr[id];
+  if(!opts.back) hist.push(cur);
+  if(from){ from.classList.remove('is-active');
+    if(!to.classList.contains('sheet') && !from.classList.contains('sheet')) from.classList.add('is-past'); }
+  Object.keys(scr).forEach(function(k){ if(k!==id&&k!==cur) scr[k].classList.remove('is-active'); });
+  if(to.classList.contains('sheet')) from.classList.add('is-active');
+  to.classList.remove('is-past'); to.classList.add('is-active');
+  cur=id; enter(id);
+}
+function back(){
+  if(!hist.length) return;
+  var prev=hist.pop();
+  scr[cur].classList.remove('is-active');
+  scr[prev].classList.remove('is-past'); scr[prev].classList.add('is-active');
+  cur=prev; enter(prev);
+}
+function jump(id){
+  var i=ORDER.indexOf(id);
+  Object.keys(scr).forEach(function(k){ scr[k].classList.add('nofx'); scr[k].classList.remove('is-active','is-past'); });
+  hist=ORDER.slice(0,i<0?0:i);
+  if(id==='offer') scr.paywall.classList.add('is-active');
+  scr[id].classList.add('is-active'); cur=id;
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    Object.keys(scr).forEach(function(k){ scr[k].classList.remove('nofx'); }); }); });
+  syncScreen(); enter(id);
+}
+function paintChips(){
+  var c=document.getElementById('chips');
+  if(!c.children.length){ ORDER.forEach(function(id){
+      var b=document.createElement('button'); b.className='chip'+(id==='offer'?' offer':''); b.textContent=LABEL[id];
+      b.dataset.id=id; b.onclick=function(){ stopDemo(); jump(id); }; c.appendChild(b); }); }
+  c.querySelectorAll('.chip').forEach(function(b){ b.classList.toggle('on', b.dataset.id===cur); });
+}
+
+function clearLoad(){ loadTimers.forEach(clearTimeout); loadTimers=[]; }
+function runLoader(){
+  var k=demo.on?0.48:1, sw=document.getElementById('loadSw');
+  var steps=[].slice.call(document.querySelectorAll('#loadSteps .tg-ls'));
+  steps.forEach(function(s){ s.classList.remove('on'); }); sw.classList.remove('on');
+  function showQuote(i){
+    document.getElementById('qText').textContent='“'+LQ[i][0]+'”';
+    document.getElementById('qWho').textContent='★ '+LQ[i][1]+'/5 · toggle.org';
+    document.querySelectorAll('#qDots i').forEach(function(d,n){ d.classList.toggle('on',n===i); });
+  }
+  showQuote(0);
+  steps.forEach(function(s,i){ loadTimers.push(setTimeout(function(){ s.classList.add('on'); },(600+i*900)*k)); });
+  [1,2,3].forEach(function(i){ loadTimers.push(setTimeout(function(){ showQuote(i); },(1400+(i-1)*1400)*k)); });
+  loadTimers.push(setTimeout(function(){ sw.classList.add('on'); },(600+steps.length*900)*k));
+  loadTimers.push(setTimeout(function(){ if(cur==='loader') go('payoff'); },(1500+steps.length*900)*k));
+}
+
+/* ================= wiring ================= */
+document.querySelectorAll('[data-go]').forEach(function(b){ b.addEventListener('click',function(){ if(!b.disabled) go(b.dataset.go); }); });
+document.querySelectorAll('[data-back]').forEach(function(b){ b.addEventListener('click',back); });
+document.querySelectorAll('#planList .tg-plan').forEach(function(b){ b.addEventListener('click',function(){ S.plan=b.dataset.v; syncScreen(); }); });
+document.getElementById('devMinus').addEventListener('click',function(){ S.dev=Math.max(1,S.dev-1); syncScreen(); });
+document.getElementById('devPlus').addEventListener('click',function(){ S.dev=Math.min(10,S.dev+1); syncScreen(); });
+document.getElementById('payClose').addEventListener('click',function(){ go('offer'); });
+document.getElementById('offClose').addEventListener('click',function(){ go('account'); });
+document.getElementById('payCta').addEventListener('click',function(){ go('account'); });
+document.getElementById('offerCta').addEventListener('click',function(){ go('account'); });
+
+function setSeg(id,attr,val){ document.querySelectorAll('#'+id+' button').forEach(function(b){ b.classList.toggle('on', b.dataset[attr]===val); }); }
+function setLang(l){ S.lang=l; S0.lang=l; setSeg('segLang','lang',l); applyStatic(); syncScreen(); paintPanel(); }
+function setTheme(th){ S.theme=th; S0.theme=th; document.getElementById('phoneIn').classList.toggle('lite',th==='light'); setSeg('segTheme','theme',th); chrome(); }
+document.querySelectorAll('#segLang button').forEach(function(b){ b.addEventListener('click',function(){ stopDemo(); setLang(b.dataset.lang); }); });
+document.querySelectorAll('#segTheme button').forEach(function(b){ b.addEventListener('click',function(){ setTheme(b.dataset.theme); }); });
+
+/* ================= the 30-second walkthrough ================= */
+var demo={tok:0,on:false,t0:0,iv:null}, finger=document.getElementById('finger'), phoneIn=document.getElementById('phoneIn');
+function W(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+function cap(txt){ document.getElementById('demoTxt').textContent=txt; }
+async function tap(sel,tok){
+  if(demo.tok!==tok) throw 0;
+  var el=document.querySelector(sel); if(!el) return;
+  var r=el.getBoundingClientRect(), p=phoneIn.getBoundingClientRect(), z=p.width/phoneIn.offsetWidth||1;
+  finger.style.left=((r.left-p.left+r.width/2)/z)+'px'; finger.style.top=((r.top-p.top+r.height/2)/z)+'px';
+  finger.classList.add('show'); await W(380); if(demo.tok!==tok) throw 0;
+  finger.classList.add('press'); await W(120); finger.classList.remove('press'); el.click(); await W(160);
+  if(demo.tok!==tok) throw 0;
+}
+async function pause(ms,tok){ await W(ms); if(demo.tok!==tok) throw 0; }
+function startDemo(){
+  stopDemo(); var tok=++demo.tok; demo.on=true; demo.t0=Date.now();
+  var keep={lang:S.lang,theme:S.theme}; S=defaults(); S.lang=keep.lang; S.theme=keep.theme; S.uses=['stream'];
+  applyStatic(); jump('privacy');
+  document.getElementById('demoCap').classList.remove('hidden');
+  demo.iv=setInterval(function(){ document.getElementById('demoProg').style.width=Math.min(100,(Date.now()-demo.t0)/240)+'%'; },200);
+  (async function(){
+    try{
+      cap('Your privacy screen stays first, exactly as it is.'); await pause(1500,tok);
+      await tap('[data-id=privacy] .tg-btn',tok);
+      cap('New: what will they use Toggle for? Your own switch is the selector.'); await pause(700,tok);
+      await tap('#useList [data-v=wifi]',tok); await pause(350,tok); await tap('#useBtn',tok);
+      cap('How many devices. One account covers ten.'); await pause(600,tok);
+      await tap('#devPlus',tok); await pause(250,tok); await tap('#devPlus',tok); await pause(450,tok);
+      await tap('[data-id=devices] .tg-btn',tok);
+      cap('Their answers, read back while your toggle switches on.'); await pause(2700,tok);
+      cap('The payoff: what is ready for them, then 600K+ installs and a review.'); await pause(2600,tok);
+      await tap('[data-id=payoff] .tg-btn',tok);
+      cap('The paywall headline comes from their first answer. Trial on yearly, with the charge date.'); await pause(1900,tok);
+      await tap('#planList [data-v=week]',tok); await pause(700,tok); await tap('#planList [data-v=year]',tok); await pause(500,tok);
+      cap('They close it. One second chance: your $11.99 monthly plan, no trial.'); await tap('#payClose',tok); await pause(2400,tok);
+      cap('That is the flow. Every screen is clickable, and the chips below jump anywhere.');
+      finger.classList.remove('show'); await pause(2400,tok); stopDemo();
+    }catch(e){}
+  })();
+}
+function stopDemo(){ if(!demo.on) return; demo.tok++; demo.on=false; clearInterval(demo.iv); finger.classList.remove('show','press');
+  document.getElementById('demoCap').classList.add('hidden'); }
+document.getElementById('demoBtn').addEventListener('click',startDemo);
+document.getElementById('demoStop').addEventListener('click',stopDemo);
+phoneIn.addEventListener('pointerdown',function(e){ if(e.isTrusted && demo.on) stopDemo(); });
+</script>
+<script>
+/* ---- the short panel: hypothesis + potential outcome, nothing else ---- */
+var PANEL = {
+privacy:{ctx:true,t:'Privacy Policy',
+ kept:'Your first screen, untouched: the no-logs promise, More details and Agree and continue. It stays first.'},
+use:{n:2,t:'Ask what they need a VPN for, then read it back',
+ hyp:'Try asking what they will use Toggle for, <b>because today nothing is asked before the price, so a sports fan and a traveller see the same paywall</b>. The five options are the five uses your own website lists.',
+ kept:'Your near-black surface, your pill cards with the green border your selected plan already uses, and your toggle switch as the selector.',
+ out:'CR +10–20%'},
+devices:{n:2,t:'Ask what they need a VPN for, then read it back',
+ hyp:'Try asking how many devices they want covered, <b>because “one account, 10 devices” is one of your strongest lines and today it lives only on your website</b>. Tap + and the payoff and loader change with it.',
+ kept:'Your round dark buttons with the green glyph, taken from the close button on your paywall.',
+ out:'CR +10–20%'},
+loader:{n:2,t:'Ask what they need a VPN for, then read it back',
+ hyp:'Try naming their answers back while it sets up, <b>because a loader only pays off when something personal comes after it</b>. The reviews are word for word from toggle.org.',
+ kept:'Your wordmark and its switch, which turns on when setup finishes, the same moment your home screen shows.',
+ out:'CR +10–20%'},
+payoff:{n:2,t:'Ask what they need a VPN for, then read it back',
+ hyp:'Try showing what is ready before the price, <b>because every line maps one of their answers to a feature you already ship</b>: residential IPs, Kill Switch, Split Tunneling, 10 devices, Family Sharing.',
+ n2:4, hyp2:'Try putting 600K+ installs and one of your own reviews here, <b>because today that proof lives only in your App Store screenshots and on toggle.org</b>. The review shown follows their first answer.',
+ out2:'CR +10–15%',
+ kept:'Your cards, your green switches, and the laurels from your App Store screenshot.',
+ out:'CR +10–20%'},
+paywall:{n:3,t:'Put their reason in the paywall headline',
+ hyp:'Try writing the headline and the four ticks from their first answer, <b>because today “Watch Anything” and four streaming lines go to everyone, including people who came for Wi‑Fi or travel</b>. Go back to Use, pick only Gaming, and the headline changes.',
+ n2:5, hyp2:'Try the 3-day trial on yearly with the charge date under the button, <b>because today the trial sits on the $12.99 weekly card while yearly is preselected and charges $59.99 today</b>. Your App Store listing already says yearly comes with a 3-day trial.',
+ out2:'CR +5–15%',
+ kept:'Your wall of streaming logos, the round close button, your headline type, green ticks, pill plan cards, BEST VALUE badge and green button. Prices are your own: $12.99 a week, $59.99 a year.',
+ out:'CR +15–20%'},
+offer:{n:1,t:'Give a second chance when they close the paywall',
+ hyp:'Try one second chance behind the X, <b>because today closing the paywall goes straight to Create account and no other price is ever shown</b>. $11.99 a month is your own App Store and website price, with no trial, so nothing is discounted or invented.',
+ kept:'Your toggle mark, pill cards, green border and badge, green button. The saving is arithmetic on your prices: $12.99 × 52 ÷ 12 = $56.29 a month.',
+ out:'ARPU +10–15%'},
+account:{ctx:true,t:'Welcome to Toggle VPN',
+ kept:'Where the flow hands over to your app. Account creation already comes after the paywall, which is the right place, so it stays there with your Support Center pill and your no-email promise.'}
+};
+function outBlock(lab,val){ return '<div class="pn-out"><div class="lab">'+lab+'</div><div class="v">'+val+'</div></div>'; }
+function paintPanel(){
+  var d=PANEL[cur]; if(!d) return;
+  var h='';
+  if(d.ctx){
+    h += '<div class="pn-n ctx">Context · no change proposed</div><h3 class="pn-t">'+d.t+'</h3>'
+       + '<div class="pn-kept">'+d.kept+'</div>';
+  } else {
+    h += '<div class="pn-n">Idea '+d.n+' of 5</div><h3 class="pn-t">'+d.t+'</h3>'
+       + '<p class="pn-hyp">'+d.hyp+'</p>'
+       + outBlock('Potential outcome · based on Adapty data', d.out);
+    if(d.hyp2){
+      h += '<div class="pn-sep"></div>'
+         + '<div class="pn-n">Idea '+d.n2+' of 5</div>'
+         + '<p class="pn-hyp" style="margin-top:12px">'+d.hyp2+'</p>'
+         + outBlock('Potential outcome · based on Adapty data', d.out2);
+    }
+    h += '<div class="pn-kept"><b>Your design, unchanged.</b> '+d.kept+'</div>';
+  }
+  if(S.lang!=='en') h += '<div class="pn-kept"><b>Language.</b> Screens are shown in '+(S.lang==='es'?'Spanish':'German')+', translated by us, to show one flow serving every market. Store prices stay as published in US dollars; reviews stay word for word in English.</div>';
+  h += '<div class="pn-foot">Ranges are Adapty’s expected effect from tests across 30,000+ subscription apps — not measured lift for Toggle VPN. '
+     + 'Prices, figures, reviews and feature lines come from your own published material.</div>';
+  document.getElementById('panel').innerHTML = h;
+}
+
+/* ---- views, jumps from the overview ---- */
+function showView(v){
+  if(v!=='proto') stopDemo();
+  document.querySelectorAll('.view').forEach(function(x){ x.classList.remove('on'); });
+  document.getElementById('view-'+v).classList.add('on');
+  document.querySelectorAll('.nav-links button[data-view]').forEach(function(b){ b.classList.toggle('on', b.dataset.view===v); });
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-view]').forEach(function(b){ b.addEventListener('click',function(){ showView(b.dataset.view); }); });
+document.querySelectorAll('.idea[data-jump]').forEach(function(b){
+  b.addEventListener('click',function(){ showView('proto'); jump(b.dataset.jump); });
+});
+document.querySelectorAll('[data-demo]').forEach(function(b){ b.addEventListener('click',function(){ showView('proto'); startDemo(); }); });
+
+applyStatic();
+scr.privacy.classList.add('is-active');
+syncScreen(); chrome(); paintChips(); paintPanel();
+if(/[?&]open=proto/.test(location.search)) showView('proto');
+</script>
+</body>
+</html>
